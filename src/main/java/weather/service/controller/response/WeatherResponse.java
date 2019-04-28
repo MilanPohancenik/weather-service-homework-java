@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class WeatherResponse {
 	
-	private String city;
+	private final String city;
 	
-	private Map<Date, Integer> temperatures;
+	private final Map<Date, Integer> temperatures;
 
 	private WeatherResponse(String city, Map<Date, Integer> temperatures) {
 		this.city = city;

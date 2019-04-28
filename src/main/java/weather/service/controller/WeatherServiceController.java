@@ -4,11 +4,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import weather.service.controller.request.NewCityRequest;
+import weather.service.controller.response.NewCityResponse;
 import weather.service.controller.response.WeatherResponse;
 import weather.service.services.WeatherService;
 
@@ -31,6 +37,13 @@ public class WeatherServiceController {
 	@GetMapping
 	public List<String> getCities() {
 		return weatherService.getCities();
+	}
+	
+	@PutMapping(consumes = "application/json")
+	@ResponseStatus(HttpStatus.CREATED)
+	public NewCityResponse addCity(@RequestBody NewCityRequest request) {
+		weatherService.addCity(request.getCity());
+		return NewCityResponse.of(request.getCity());
 	}
 	
 }

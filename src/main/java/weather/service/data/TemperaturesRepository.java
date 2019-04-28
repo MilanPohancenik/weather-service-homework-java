@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,8 +35,12 @@ public class TemperaturesRepository {
 	public List<String> getCities() {
 		return new ArrayList<>(data.keySet());
 	}
+	
+	public void addCity(String city) {
+		data.put(city, new LinkedHashMap<>());
+	}
 
- 	@PostConstruct
+  	@PostConstruct
 	public void onInit() throws JsonParseException, JsonMappingException, IOException {
 		InputStream inputStreamData = this.getClass().getResourceAsStream("max_daily_temperatures.json");
 		MaxDailyTemperatures jsonData = objectMapper.readValue(inputStreamData, MaxDailyTemperatures.class);
