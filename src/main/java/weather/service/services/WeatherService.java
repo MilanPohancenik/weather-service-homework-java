@@ -50,19 +50,24 @@ public class WeatherService {
 	}
 	
 	private void validateTemperatures(String city, Map<Date, Integer> temperatures) {
-		Map<Date, Integer> existing = getTemperaturesForCity(city);
-		Map<Date, Integer> conflicing = new LinkedHashMap<>();
-		for(Date existingDate : existing.keySet()) {
-			if (temperatures.containsKey(existingDate)) {
-				if (conflicing.size() <= 10) {
-					conflicing.put(existingDate, existing.get(existingDate));
-				} else {
-					break;
+		try {
+			Map<Date, Integer> existing = getTemperaturesForCity(city);
+			Map<Date, Integer> conflicing = new LinkedHashMap<>();
+			for(Date existingDate : existing.keySet()) {
+				if (temperatures.containsKey(existingDate)) {
+					if (conflicing.size() <= 10) {
+						conflicing.put(existingDate, existing.get(existingDate));
+					} else {
+						break;
+					}
 				}
 			}
-		}
-		if (conflicing.size() > 0) {
-			throw new TemperatureAlreadyExists(city, conflicing);
+			if (conflicing.size() > 0) {
+				throw new TemperatureAlreadyExists(city, conflicing);
+			}
+		} catch (ValuesNotFoundException e) {
+			// does not even have values, so everything is ok
+			return;
 		}
 	}
 }

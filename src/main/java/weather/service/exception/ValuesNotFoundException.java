@@ -20,7 +20,7 @@ public class ValuesNotFoundException extends RuntimeException {
 	
 	@Override
 	public String getMessage() {
-		return String.format("No values found for city: '%1$s'", city);
+		return String.format("No values found for city [%1$s]", city);
 	}
 
 }
