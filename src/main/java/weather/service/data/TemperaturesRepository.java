@@ -21,26 +21,38 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TemperaturesRepository {
 
 	private Map<String, Map<Date, Integer>> data;
-	
+
 	private ObjectMapper objectMapper;
-	
+
 	public TemperaturesRepository(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
-	
+
 	public Optional<Map<Date, Integer>> getTemperaturesForCity(String city) {
 		return Optional.ofNullable(data.get(city.toLowerCase()));
 	}
-	
+
 	public List<String> getCities() {
 		return new ArrayList<>(data.keySet());
 	}
-	
+
 	public void addCity(String city) {
 		data.put(city, new LinkedHashMap<>());
 	}
 
-  	@PostConstruct
+	public String findCity(String city) {
+		return data.keySet()
+				.stream()
+				.filter(existing -> existing.equalsIgnoreCase(city))
+				.findFirst()
+				.orElse(null);
+	}
+
+	public void addTemperatures(String city, Map<Date, Integer> temperatures) {
+		data.get(city.toLowerCase()).putAll(temperatures);
+	}
+
+	@PostConstruct
 	public void onInit() throws JsonParseException, JsonMappingException, IOException {
 		InputStream inputStreamData = this.getClass().getResourceAsStream("max_daily_temperatures.json");
 		MaxDailyTemperatures jsonData = objectMapper.readValue(inputStreamData, MaxDailyTemperatures.class);

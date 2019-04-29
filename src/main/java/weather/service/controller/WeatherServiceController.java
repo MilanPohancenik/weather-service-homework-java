@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import weather.service.controller.request.NewCityRequest;
+import weather.service.controller.request.NewTemperatureRequest;
 import weather.service.controller.response.NewCityResponse;
+import weather.service.controller.response.NewTemperatureResponse;
 import weather.service.controller.response.WeatherResponse;
 import weather.service.services.WeatherService;
 
@@ -44,6 +46,15 @@ public class WeatherServiceController {
 	public NewCityResponse addCity(@RequestBody NewCityRequest request) {
 		weatherService.addCity(request.getCity());
 		return NewCityResponse.of(request.getCity());
+	}
+	
+	@PutMapping(value = "{city}/temperatures", 
+			consumes = "application/json", 
+			produces = "application/json")
+	@ResponseStatus(HttpStatus.CREATED)
+	public NewTemperatureResponse addTemperatureForCity(@PathVariable("city") String city, @RequestBody NewTemperatureRequest request) {
+		weatherService.addTemperatures(city, request.getTemperatures());
+		return NewTemperatureResponse.of(city, request.getTemperatures());
 	}
 	
 }
