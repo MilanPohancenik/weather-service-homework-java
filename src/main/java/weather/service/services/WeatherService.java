@@ -13,6 +13,9 @@ import weather.service.exception.CityDoesNotExist;
 import weather.service.exception.TemperatureAlreadyExists;
 import weather.service.exception.ValuesNotFoundException;
 
+/**
+ * This service handles the business case of adding and retrieving temperatures for a city and also the list of cities.
+ */
 @Service
 public class WeatherService {
 
@@ -22,6 +25,14 @@ public class WeatherService {
 		this.temperaturesRepository = temperaturesRepository;
 	}
 
+	/**
+	 * Returns the temperatures for a given city
+	 *
+	 * @throws CityDoesNotExist exception when the city could not be found in the list
+	 * @throws ValuesNotFoundException if there are no temperature values for the given city
+	 * @param city
+	 * @return returns a map of temperatures for a particular date
+	 */
 	public Map<Date, Integer> getTemperaturesForCity(String city) {
 		if (temperaturesRepository.findCity(city) == null) {
 			throw new CityDoesNotExist(city);
@@ -29,10 +40,21 @@ public class WeatherService {
 		return temperaturesRepository.getTemperaturesForCity(city).orElseThrow(() -> new ValuesNotFoundException(city));
 	}
 
+	/**
+	 * Lists all the available cities
+	 *
+	 * @return
+	 */
 	public List<String> getCities() {
 		return temperaturesRepository.getCities();
 	}
 
+	/**
+	 * Adds a new city to the list.
+	 *
+	 * @throws CityAlreadyExistsException if the city is already in the list
+	 * @param city
+	 */
 	public void addCity(String city) {
 		if (temperaturesRepository.findCity(city) != null) {
 			throw new CityAlreadyExistsException(city);
@@ -40,7 +62,15 @@ public class WeatherService {
 			temperaturesRepository.addCity(city);
 		}
 	}
-	
+
+	/**
+	 * Adds temperatures for a given city and dates
+	 *
+	 * @throws TemperatureAlreadyExists exception if a value already exists, with a list of first 10 conflicting temperatures
+	 * @throws CityDoesNotExist exception when the city does not exist
+	 * @param city
+	 * @param temperatures
+	 */
 	public void addTemperatures(String city, Map<Date, Integer> temperatures) {
 		// first do validation, if values already exist
 		validateTemperatures(city, temperatures);
@@ -48,7 +78,13 @@ public class WeatherService {
 		// then append
 		temperaturesRepository.addTemperatures(city, temperatures);
 	}
-	
+
+	/**
+	 * Validatas if the values that should be inserted already exist. Also validates if the city exists.
+	 *
+	 * @param city
+	 * @param temperatures
+	 */
 	private void validateTemperatures(String city, Map<Date, Integer> temperatures) {
 		try {
 			Map<Date, Integer> existing = getTemperaturesForCity(city);
